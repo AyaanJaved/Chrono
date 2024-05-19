@@ -20,6 +20,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.ayaanjaved.chrono.ui.theme.ChronoTheme
 
 class MainActivity : ComponentActivity() {
@@ -28,6 +31,8 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             ChronoTheme {
+                val navController = rememberNavController()
+
                 Scaffold(modifier = Modifier.fillMaxSize(),
                     bottomBar = {
                        NavigationBar {
@@ -40,12 +45,18 @@ class MainActivity : ComponentActivity() {
 
                            NavigationBarItem(
                                selected = selectedItem == 0,
-                               onClick = {selectedItem = 0},
+                               onClick = {
+                                   selectedItem = 0
+                                   navController.navigate("task")
+                                         },
                                icon = { Icon(imageVector = Icons.Filled.Add, contentDescription = "")})
 
                            NavigationBarItem(
                                selected = selectedItem == 1,
-                               onClick = {selectedItem = 1},
+                               onClick = {
+                                   selectedItem = 1
+                                   navController.navigate("pomodoro")
+                                         },
                                icon = { Icon(imageVector = Icons.Filled.Add, contentDescription = "")})
 
                            NavigationBarItem(
@@ -55,10 +66,17 @@ class MainActivity : ComponentActivity() {
                        }
                     }
                 ) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
+                    NavHost(navController = navController, startDestination = "task", modifier = Modifier.padding(innerPadding)) {
+                        composable("task") {
+                            TaskScreen(navController)
+                        }
+                        composable("pomodoro") {
+                            PomodoroScreen(navController)
+                        }
+                        composable("stats") {
+                            StatsScreen(navController)
+                        }
+                    }
                 }
             }
         }
