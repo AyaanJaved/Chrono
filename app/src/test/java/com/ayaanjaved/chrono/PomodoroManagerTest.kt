@@ -11,19 +11,35 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.junit.Before
 
 class PomodoroManagerTest {
+    private lateinit var mockChronoCountDownTimer: MockChronoCountDownTimer
+    private lateinit var pomodoroManager: PomodoroManager
+
+    @Before
+    fun init() {
+        mockChronoCountDownTimer = MockChronoCountDownTimer()
+        pomodoroManager = PomodoroManager(mockChronoCountDownTimer)
+    }
+
     @Test
     fun value_updates_when_timer_starts() {
-        val mockChronoCountDownTimer = MockChronoCountDownTimer()
-        val pomodoroManager = PomodoroManager(mockChronoCountDownTimer)
-
         assertEquals(Constants.DEFAULT_SESSION_DURATION_MILLIS, pomodoroManager.onTickValue.value)
 
         pomodoroManager.startTimer()
         Thread.sleep(2000)
 
         assertTrue(pomodoroManager.onTickValue.value < Constants.DEFAULT_SESSION_DURATION_MILLIS)
+    }
+
+    @Test
+    fun stopTimer_onRunningTimer_resetsState() {
+        pomodoroManager.startTimer()
+        Thread.sleep(2000)
+
+        pomodoroManager.stopTimer()
+        assertEquals(Constants.DEFAULT_SESSION_DURATION_MILLIS, pomodoroManager.onTickValue.value)
     }
 }
 

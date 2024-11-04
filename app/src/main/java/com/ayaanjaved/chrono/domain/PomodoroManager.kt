@@ -19,6 +19,7 @@ class PomodoroManager(private val chronoCountDownTimer: ChronoCountDownTimer) {
 
     fun stopTimer() {
         chronoCountDownTimer.stopTimer()
+        _onTickValue.value = sessionDuration
     }
 
     fun setSession() {
